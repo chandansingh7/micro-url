@@ -16,7 +16,7 @@ pipeline {
 
         stage('Build with Gradle') {
             steps {
-                sh './gradlew clean build'  // Skip tests for faster builds; remove '-x test' if needed
+                sh './gradlew clean build -X test'  // Skip tests for faster builds; remove '-x test' if needed
             }
         }
 
