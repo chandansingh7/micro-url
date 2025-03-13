@@ -1,10 +1,10 @@
-package com.tinycrew.microurl.service;
+package com.corecrew.microurl.service;
 
-import com.tinycrew.microurl.dtos.LoginRequest;
-import com.tinycrew.microurl.models.User;
-import com.tinycrew.microurl.repository.UserRepository;
-import com.tinycrew.microurl.security.jwt.JwtAuthenticationResponse;
-import com.tinycrew.microurl.security.jwt.JwtUtils;
+import com.corecrew.microurl.dtos.LoginRequest;
+import com.corecrew.microurl.models.User;
+import com.corecrew.microurl.repository.UserRepository;
+import com.corecrew.microurl.security.jwt.JwtAuthenticationResponse;
+import com.corecrew.microurl.security.jwt.JwtUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

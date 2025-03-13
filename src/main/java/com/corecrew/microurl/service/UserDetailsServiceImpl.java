@@ -1,7 +1,7 @@
-package com.tinycrew.microurl.service;
+package com.corecrew.microurl.service;
 
-import com.tinycrew.microurl.models.User;
-import com.tinycrew.microurl.repository.UserRepository;
+import com.corecrew.microurl.models.User;
+import com.corecrew.microurl.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

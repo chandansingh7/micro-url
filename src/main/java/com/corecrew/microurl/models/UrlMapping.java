@@ -1,4 +1,4 @@
-package com.tinycrew.microurl.models;
+package com.corecrew.microurl.models;
 
 import jakarta.persistence.*;
 import lombok.Data;

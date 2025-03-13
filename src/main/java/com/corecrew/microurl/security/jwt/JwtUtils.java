@@ -1,6 +1,6 @@
-package com.tinycrew.microurl.security.jwt;
+package com.corecrew.microurl.security.jwt;
 
-import com.tinycrew.microurl.service.UserDetailsImpl;
+import com.corecrew.microurl.service.UserDetailsImpl;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

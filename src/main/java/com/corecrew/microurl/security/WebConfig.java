@@ -1,4 +1,4 @@
-package com.tinycrew.microurl.security;
+package com.corecrew.microurl.security;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +10,6 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Value("${frontend.url}")
     private String frontendUrl;
-
-    @Value("${frontend.port}")
-    private String frontendPort;
 
 
     @Override

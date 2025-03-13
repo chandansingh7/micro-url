@@ -1,7 +1,7 @@
-package com.tinycrew.microurl.security;
+package com.corecrew.microurl.security;
 
-import com.tinycrew.microurl.security.jwt.JwtAuthenticationFilter;
-import com.tinycrew.microurl.service.UserDetailsServiceImpl;
+import com.corecrew.microurl.security.jwt.JwtAuthenticationFilter;
+import com.corecrew.microurl.service.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

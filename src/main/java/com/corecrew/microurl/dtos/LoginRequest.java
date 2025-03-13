@@ -1,4 +1,4 @@
-package com.tinycrew.microurl.dtos;
+package com.corecrew.microurl.dtos;
 
 import lombok.Data;
 

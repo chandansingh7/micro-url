@@ -1,6 +1,6 @@
-package com.tinycrew.microurl.repository;
+package com.corecrew.microurl.repository;
 
-import com.tinycrew.microurl.models.User;
+import com.corecrew.microurl.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,12 +1,12 @@
-package com.tinycrew.microurl.service;
+package com.corecrew.microurl.service;
 
-import com.tinycrew.microurl.dtos.ClickEventDTO;
-import com.tinycrew.microurl.dtos.UrlMappingDTO;
-import com.tinycrew.microurl.models.ClickEvent;
-import com.tinycrew.microurl.models.UrlMapping;
-import com.tinycrew.microurl.models.User;
-import com.tinycrew.microurl.repository.ClickEventRepository;
-import com.tinycrew.microurl.repository.UrlMappingRepository;
+import com.corecrew.microurl.dtos.ClickEventDTO;
+import com.corecrew.microurl.dtos.UrlMappingDTO;
+import com.corecrew.microurl.models.ClickEvent;
+import com.corecrew.microurl.models.UrlMapping;
+import com.corecrew.microurl.models.User;
+import com.corecrew.microurl.repository.ClickEventRepository;
+import com.corecrew.microurl.repository.UrlMappingRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

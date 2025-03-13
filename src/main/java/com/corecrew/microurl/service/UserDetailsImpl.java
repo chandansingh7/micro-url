@@ -1,6 +1,6 @@
-package com.tinycrew.microurl.service;
+package com.corecrew.microurl.service;
 
-import com.tinycrew.microurl.models.User;
+import com.corecrew.microurl.models.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

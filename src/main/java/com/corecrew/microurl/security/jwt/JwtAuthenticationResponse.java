@@ -1,4 +1,4 @@
-package com.tinycrew.microurl.security.jwt;
+package com.corecrew.microurl.security.jwt;
 
 
 import lombok.AllArgsConstructor;
