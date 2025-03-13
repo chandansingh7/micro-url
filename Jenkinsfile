@@ -15,6 +15,16 @@ pipeline {
             }
         }
 
+        stage('Load Environment Variables from .env') {
+            steps {
+                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                    sh """
+                        export \$(grep -v '^#' \$ENV_FILE | xargs)
+                    """
+                }
+            }
+        }
+
         stage('Build with Gradle') {
             steps {
                 sh './gradlew clean build -x test'
@@ -32,14 +42,25 @@ pipeline {
             }
         }
 
+        stage('Set Environment Variables in Azure') {
+            steps {
+                sh """
+                    az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
+                        DB_URL=\$DB_URL \
+                        DB_USER=\$DB_USER \
+                        DB_PASSWORD=\$DB_PASSWORD \
+                        DIALECT=\$spring_jpa_properties_hibernate_dialect \
+                        JWT_SECRET=\$JWT_SECRET \
+                        FRONTEND_URL=\$FRONTEND_URL
+                """
+            }
+        }
+
         stage('Deploy to Azure Functions') {
             steps {
-                withCredentials([azureServicePrincipal(AZURE_CREDENTIALS_ID)]) {
-                    sh """
-                        az login --service-principal -u \$AZURE_CLIENT_ID -p \$AZURE_CLIENT_SECRET --tenant \$AZURE_TENANT_ID
-                        az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src $DEPLOYMENT_PACKAGE
-                    """
-                }
+                sh """
+                    az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src $DEPLOYMENT_PACKAGE
+                """
             }
         }
     }
