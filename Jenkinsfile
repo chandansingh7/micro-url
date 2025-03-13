@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        AZURE_CREDENTIALS_ID = 'azure-jenkins-creds'  // Replace with the actual Jenkins credential ID
+        AZURE_CREDENTIALS_ID = 'azure-jenkins-creds'  // Change this to the actual Jenkins credential ID
         FUNCTION_APP_NAME = 'myMicroUrlFunctionApp'   // Your Azure Function App Name
         RESOURCE_GROUP = 'myMicroUrlResoucreGroup'    // Your Azure Resource Group Name
     }
@@ -10,13 +10,13 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://github.com/chandansingh7/micro-url.git'  // Your actual GitHub repository
+                git branch: 'main', url: 'https://github.com/chandansingh7/micro-url.git'
             }
         }
 
         stage('Build with Gradle') {
             steps {
-                sh './gradlew clean build -x test'  // Skip tests for faster builds; remove '-x test' if needed
+                sh './gradlew clean build'  // Skip tests for faster builds; remove '-x test' if needed
             }
         }
 
