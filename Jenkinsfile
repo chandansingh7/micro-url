@@ -49,7 +49,7 @@ pipeline {
                         DB_URL=\$DB_URL \
                         DB_USER=\$DB_USER \
                         DB_PASSWORD=\$DB_PASSWORD \
-                        DIALECT=\$spring_jpa_properties_hibernate_dialect \
+                        DIALECT=\$DIALECT \
                         JWT_SECRET=\$JWT_SECRET \
                         FRONTEND_URL=\$FRONTEND_URL
                 """
