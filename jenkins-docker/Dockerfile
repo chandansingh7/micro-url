@@ -12,7 +12,8 @@ RUN apt-get update && apt-get install -y \
     unzip \
     maven \
     nodejs \
-    npm
+    npm \
+    zip  # Added zip package
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -31,4 +32,3 @@ EXPOSE 8089
 
 # Start Jenkins
 CMD ["jenkins.sh"]
-

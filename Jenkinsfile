@@ -4,7 +4,7 @@ pipeline {
     environment {
         AZURE_CREDENTIALS_ID = 'azure-jenkins-creds'
         FUNCTION_APP_NAME = 'myMicroUrlFunctionApp'
-        RESOURCE_GROUP = 'myMicroUrlResoucreGroup'
+        RESOURCE_GROUP = 'myMicroUrlResourceGroup'
         DEPLOYMENT_PACKAGE = "functionapp.zip"
     }
 
