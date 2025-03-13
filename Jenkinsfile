@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        AZURE_CREDENTIALS_ID = 'azure-jenkins-creds'  // Change this to the actual Jenkins credential ID
-        FUNCTION_APP_NAME = 'myMicroUrlFunctionApp'   // Your Azure Function App Name
-        RESOURCE_GROUP = 'myMicroUrlResoucreGroup'    // Your Azure Resource Group Name
+        AZURE_CREDENTIALS_ID = 'azure-jenkins-creds'
+        FUNCTION_APP_NAME = 'myMicroUrlFunctionApp'
+        RESOURCE_GROUP = 'myMicroUrlResoucreGroup'
     }
 
     stages {
@@ -16,16 +16,16 @@ pipeline {
 
         stage('Build with Gradle') {
             steps {
-                sh './gradlew clean build -x test'  // Skip tests for faster builds; remove '-x test' if needed
+                sh './gradlew clean build -x test'
             }
         }
 
         stage('Deploy to Azure Functions') {
             steps {
-                withAzureCLI(credentialsId: AZURE_CREDENTIALS_ID) {
+                withCredentials([azureServicePrincipal(AZURE_CREDENTIALS_ID)]) {
                     sh """
-                        func azure functionapp publish $FUNCTION_APP_NAME \
-                        --resource-group $RESOURCE_GROUP --java
+                        az login --service-principal -u \$AZURE_CLIENT_ID -p \$AZURE_CLIENT_SECRET --tenant \$AZURE_TENANT_ID
+                        az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src build/libs/*.jar
                     """
                 }
             }
