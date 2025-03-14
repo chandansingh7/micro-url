@@ -20,8 +20,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
                     sh '''#!/bin/bash
                         set -a
-                        while IFS= read -r line; do
-                            [[ -z "$line" || "$line" == \#* ]] && continue
+                        while IFS= read -r line || [[ -n "$line" ]]; do
+                            [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
                             key=$(echo "$line" | cut -d= -f1)
                             value=$(echo "$line" | cut -d= -f2-)
                             export "$key=\"$value\""
