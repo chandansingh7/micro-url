@@ -30,7 +30,7 @@ pipeline {
                 }
             }
         }
-}
+
 
         stage('Build with Gradle') {
             steps {
