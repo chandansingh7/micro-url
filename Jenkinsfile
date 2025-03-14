@@ -6,6 +6,7 @@ pipeline {
         FUNCTION_APP_NAME = 'myMicroUrlFunctionApp'
         RESOURCE_GROUP = 'myMicroUrlResourceGroup'
         DEPLOYMENT_PACKAGE = "functionapp.zip"
+        KEY_VAULT_NAME = 'myMicroUrlKeyVault'
     }
 
     stages {
@@ -43,26 +44,19 @@ pipeline {
             }
         }
 
-        stage('Set Environment Variables in Azure') {
+        stage('Fetch Env Variables from Key Vault and Configure App') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
-                    script {
-                        def envVars = readFile(ENV_FILE).trim().split('\n')
-                        def settings = []
+                script {
+                    def dbUrl = sh(script: "az keyvault secret show --name db-url --vault-name $KEY_VAULT_NAME --query value -o tsv", returnStdout: true).trim()
+                    def dbUsername = sh(script: "az keyvault secret show --name db-username --vault-name $KEY_VAULT_NAME --query value -o tsv", returnStdout: true).trim()
+                    def dbPassword = sh(script: "az keyvault secret show --name db-password --vault-name $KEY_VAULT_NAME --query value -o tsv", returnStdout: true).trim()
 
-                        envVars.each { line ->
-                            if (!line.startsWith("#") && line.contains("=")) {
-                                def (key, value) = line.tokenize('=')
-                                settings.add("${key.trim()}='${value.trim()}'")
-                            }
-                        }
-
-                        def settingsStr = settings.join(" ")
-
-                        sh """
-                            az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings $settingsStr
-                        """
-                    }
+                    sh """
+                        az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
+                            DATABASE_URL='$dbUrl' \
+                            DATABASE_USERNAME='$dbUsername' \
+                            DATABASE_PASSWORD='$dbPassword'
+                    """
                 }
             }
         }
