@@ -17,10 +17,11 @@ pipeline {
 
         stage('Load Environment Variables from .env') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
-                    sh """
-                        export \$(grep -v '^#' \$ENV_FILE | xargs)
-                    """
+                script {
+                    def envVars = readProperties(file: '.env')
+                    envVars.each { key, value ->
+                        env[key] = value
+                    }
                 }
             }
         }
@@ -46,12 +47,12 @@ pipeline {
             steps {
                 sh """
                     az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
-                        DB_URL=\$DB_URL \
-                        DB_USER=\$DB_USER \
-                        DB_PASSWORD=\$DB_PASSWORD \
-                        DIALECT=\$DIALECT \
-                        JWT_SECRET=\$JWT_SECRET \
-                        FRONTEND_URL=\$FRONTEND_URL
+                        DB_URL="${env.DB_URL}" \
+                        DB_USER="${env.DB_USER}" \
+                        DB_PASSWORD="${env.DB_PASSWORD}" \
+                        DIALECT="${env.DIALECT}" \
+                        JWT_SECRET="${env.JWT_SECRET}" \
+                        FRONTEND_URL="${env.FRONTEND_URL}"
                 """
             }
         }
