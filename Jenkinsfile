@@ -18,9 +18,13 @@ pipeline {
         stage('Load Environment Variables from .env') {
             steps {
                 script {
-                    def envVars = readProperties(file: '.env')
-                    envVars.each { key, value ->
-                        env[key] = value
+                    def envFileContent = readFile('.env').trim()
+                    def envLines = envFileContent.split('\n')
+                    envLines.each { line ->
+                        if (line.trim() && !line.startsWith("#")) {
+                            def (key, value) = line.split('=', 2)
+                            env[key.trim()] = value.trim()
+                        }
                     }
                 }
             }
