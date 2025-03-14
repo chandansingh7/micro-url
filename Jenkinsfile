@@ -16,17 +16,16 @@ pipeline {
         }
 
         stage('Load Environment Variables from .env') {
-            steps {
-                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
-                    sh '''
-                        #!/bin/bash -e
-                        set -a  # Enable automatic exporting of variables
-                        source "$ENV_FILE"
-                        set +a  # Disable automatic exporting
-                    '''
+                    steps {
+                        withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                            sh '''#!/bin/bash
+                                set -a
+                                source "$ENV_FILE"
+                                set +a
+                            '''
+                        }
+                    }
                 }
-            }
-        }
 
         stage('Build with Gradle') {
             steps {
