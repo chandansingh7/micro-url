@@ -19,13 +19,18 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
                     script {
-                        def envFileContent = readFile("${ENV_FILE}").trim()
+                        def envVars = []
+                        def envFileContent = readFile(ENV_FILE).trim()
                         def envLines = envFileContent.split('\n')
+
                         envLines.each { line ->
                             if (line.trim() && !line.startsWith("#")) {
                                 def (key, value) = line.split('=', 2)
-                                env[key.trim()] = value.trim().replace("\"", "").replace(";", "") // Remove quotes & semicolon
+                                envVars << "${key.trim()}=${value.trim().replaceAll('\"|;', '')}"  // Remove quotes and semicolons
                             }
+                        }
+                        withEnv(envVars) {
+                            sh 'env'  // Debugging: Prints environment variables
                         }
                     }
                 }
@@ -53,12 +58,12 @@ pipeline {
             steps {
                 sh """
                     az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
-                        DB_URL="${env.DB_URL}" \
-                        DB_USER="${env.DB_USER}" \
-                        DB_PASSWORD="${env.DB_PASSWORD}" \
-                        DIALECT="${env.DIALECT}" \
-                        JWT_SECRET="${env.JWT_SECRET}" \
-                        FRONTEND_URL="${env.FRONTEND_URL}"
+                        DB_URL="$DB_URL" \
+                        DB_USER="$DB_USER" \
+                        DB_PASSWORD="$DB_PASSWORD" \
+                        DIALECT="$DIALECT" \
+                        JWT_SECRET="$JWT_SECRET" \
+                        FRONTEND_URL="$FRONTEND_URL"
                 """
             }
         }
