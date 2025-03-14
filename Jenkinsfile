@@ -17,20 +17,20 @@ pipeline {
 
         stage('Load Environment Variables from .env') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
-                    sh '''#!/bin/bash
-                        set -a
-                        while IFS= read -r line || [[ -n "$line" ]]; do
-                            [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
-                            key=$(echo "$line" | cut -d= -f1)
-                            value=$(echo "$line" | cut -d= -f2-)
-                            export "$key=\"$value\""
-                        done < "$ENV_FILE"
-                        set +a
-                    '''
+                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                    script {
+                        def envVars = readFile(ENV_FILE).trim().split('\n')
+                        envVars.each { line ->
+                            if (!line.startsWith("#") && line.contains("=")) {
+                                def (key, value) = line.tokenize('=')
+                                env[key.trim()] = value.trim()
+                            }
+                        }
+                    }
                 }
             }
         }
+}
 
         stage('Build with Gradle') {
             steps {
