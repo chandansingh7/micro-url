@@ -17,7 +17,7 @@ pipeline {
 
         stage('Load Environment Variables from .env') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
                     sh '''#!/bin/bash
                         set -a
                         while IFS= read -r line || [[ -n "$line" ]]; do
