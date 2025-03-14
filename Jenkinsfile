@@ -45,7 +45,7 @@ pipeline {
 
         stage('Set Environment Variables in Azure') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
                     script {
                         def envVars = readFile(ENV_FILE).trim().split('\n')
                         def settings = []
