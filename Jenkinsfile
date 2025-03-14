@@ -17,19 +17,24 @@ pipeline {
 
         stage('Load Environment Variables from .env') {
             steps {
-                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
                     script {
                         def envVars = readFile(ENV_FILE).trim().split('\n')
+                        def envList = []
                         envVars.each { line ->
                             if (!line.startsWith("#") && line.contains("=")) {
                                 def (key, value) = line.tokenize('=')
-                                env[key.trim()] = value.trim()
+                                envList.add("${key.trim()}=${value.trim()}")
                             }
+                        }
+                        withEnv(envList) {
+                            echo "Loaded environment variables."
                         }
                     }
                 }
             }
         }
+
 
 
         stage('Build with Gradle') {
