@@ -18,23 +18,11 @@ pipeline {
         stage('Load Environment Variables from .env') {
             steps {
                 withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
-                    script {
-                        def envFileContent = readFile(ENV_FILE).trim()
-                        def envVars = []
-
-                        envFileContent.split('\n').each { line ->
-                            if (line.trim() && !line.startsWith("#")) {
-                                def (key, value) = line.split('=', 2)
-                                value = value.trim().replaceAll('"|;', '')  // Remove quotes and semicolons
-                                envVars << "${key}=${value}"
-                                env[key] = value  // ✅ Make variables available globally
-                            }
-                        }
-
-                        withEnv(envVars) {
-                            sh 'env'  // Debugging: Print environment variables
-                        }
-                    }
+                    sh """
+                        set -a  # Enable export of all variables
+                        source $ENV_FILE
+                        set +a  # Disable auto-export
+                    """
                 }
             }
         }
@@ -58,17 +46,15 @@ pipeline {
 
         stage('Set Environment Variables in Azure') {
             steps {
-                script {
-                    sh """
-                        az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
-                            DB_URL="${env.DB_URL}" \
-                            DB_USER="${env.DB_USER}" \
-                            DB_PASSWORD="${env.DB_PASSWORD}" \
-                            DIALECT="${env.DIALECT}" \
-                            JWT_SECRET="${env.JWT_SECRET}" \
-                            FRONTEND_URL="${env.FRONTEND_URL}"
-                    """
-                }
+                sh """
+                    az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
+                        DB_URL=\$DB_URL \
+                        DB_USER=\$DB_USER \
+                        DB_PASSWORD=\$DB_PASSWORD \
+                        DIALECT=\$DIALECT \
+                        JWT_SECRET="\$JWT_SECRET" \
+                        FRONTEND_URL=\$FRONTEND_URL
+                """
             }
         }
 
