@@ -17,13 +17,15 @@ pipeline {
 
         stage('Load Environment Variables from .env') {
             steps {
-                script {
-                    def envFileContent = readFile('.env').trim()
-                    def envLines = envFileContent.split('\n')
-                    envLines.each { line ->
-                        if (line.trim() && !line.startsWith("#")) {
-                            def (key, value) = line.split('=', 2)
-                            env[key.trim()] = value.trim()
+                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                    script {
+                        def envFileContent = readFile("${ENV_FILE}").trim()
+                        def envLines = envFileContent.split('\n')
+                        envLines.each { line ->
+                            if (line.trim() && !line.startsWith("#")) {
+                                def (key, value) = line.split('=', 2)
+                                env[key.trim()] = value.trim().replace("\"", "").replace(";", "") // Remove quotes & semicolon
+                            }
                         }
                     }
                 }
