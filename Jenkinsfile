@@ -18,11 +18,12 @@ pipeline {
         stage('Load Environment Variables from .env') {
             steps {
                 withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
-                    sh """
-                        set -a  # Enable export of all variables
-                        source $ENV_FILE
-                        set +a  # Disable auto-export
-                    """
+                    sh '''
+                        #!/bin/bash -e
+                        set -a  # Enable automatic exporting of variables
+                        source "$ENV_FILE"
+                        set +a  # Disable automatic exporting
+                    '''
                 }
             }
         }
@@ -35,34 +36,37 @@ pipeline {
 
         stage('Package for Deployment') {
             steps {
-                sh """
+                sh '''
+                    #!/bin/bash -e
                     mkdir -p deployment
                     cp build/libs/micro-url-0.0.1-SNAPSHOT.jar deployment/
                     cd deployment
                     zip -r ../$DEPLOYMENT_PACKAGE .
-                """
+                '''
             }
         }
 
         stage('Set Environment Variables in Azure') {
             steps {
-                sh """
-                    az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
-                        DB_URL=\$DB_URL \
-                        DB_USER=\$DB_USER \
-                        DB_PASSWORD=\$DB_PASSWORD \
-                        DIALECT=\$DIALECT \
-                        JWT_SECRET="\$JWT_SECRET" \
-                        FRONTEND_URL=\$FRONTEND_URL
-                """
+                sh '''
+                    #!/bin/bash -e
+                    az functionapp config appsettings set -g "$RESOURCE_GROUP" -n "$FUNCTION_APP_NAME" --settings \
+                        DB_URL="$DB_URL" \
+                        DB_USER="$DB_USER" \
+                        DB_PASSWORD="$DB_PASSWORD" \
+                        DIALECT="$DIALECT" \
+                        JWT_SECRET="$JWT_SECRET" \
+                        FRONTEND_URL="$FRONTEND_URL"
+                '''
             }
         }
 
         stage('Deploy to Azure Functions') {
             steps {
-                sh """
-                    az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src $DEPLOYMENT_PACKAGE
-                """
+                sh '''
+                    #!/bin/bash -e
+                    az functionapp deployment source config-zip -g "$RESOURCE_GROUP" -n "$FUNCTION_APP_NAME" --src "$DEPLOYMENT_PACKAGE"
+                '''
             }
         }
     }
