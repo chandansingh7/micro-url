@@ -15,28 +15,6 @@ pipeline {
             }
         }
 
-        stage('Load Environment Variables from .env') {
-            steps {
-                withCredentials([file(credentialsId: 'env-file-secret-2', variable: 'ENV_FILE')]) {
-                    script {
-                        def envVars = readFile(ENV_FILE).trim().split('\n')
-                        def envList = []
-                        envVars.each { line ->
-                            if (!line.startsWith("#") && line.contains("=")) {
-                                def (key, value) = line.tokenize('=')
-                                envList.add("${key.trim()}=${value.trim()}")
-                            }
-                        }
-                        withEnv(envList) {
-                            echo "Loaded environment variables."
-                        }
-                    }
-                }
-            }
-        }
-
-
-
         stage('Build with Gradle') {
             steps {
                 sh './gradlew clean build -x test'
@@ -67,15 +45,25 @@ pipeline {
 
         stage('Set Environment Variables in Azure') {
             steps {
-                sh """
-                    az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings \
-                        DB_URL="$DB_URL" \
-                        DB_USER="$DB_USER" \
-                        DB_PASSWORD="$DB_PASSWORD" \
-                        DIALECT="$DIALECT" \
-                        JWT_SECRET="$JWT_SECRET" \
-                        FRONTEND_URL="$FRONTEND_URL"
-                """
+                withCredentials([file(credentialsId: 'env-file-secret', variable: 'ENV_FILE')]) {
+                    script {
+                        def envVars = readFile(ENV_FILE).trim().split('\n')
+                        def settings = []
+
+                        envVars.each { line ->
+                            if (!line.startsWith("#") && line.contains("=")) {
+                                def (key, value) = line.tokenize('=')
+                                settings.add("${key.trim()}='${value.trim()}'")
+                            }
+                        }
+
+                        def settingsStr = settings.join(" ")
+
+                        sh """
+                            az functionapp config appsettings set -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --settings $settingsStr
+                        """
+                    }
+                }
             }
         }
 
